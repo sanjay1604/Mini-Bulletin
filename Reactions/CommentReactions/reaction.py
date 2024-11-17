@@ -106,13 +106,3 @@ class PostReaction:
             connection.close()
             return result[0] if result else 0
         return 0
-
-    # For testing purpose: print out the reactions for a specific post
-    @classmethod
-    def print_reactions(cls, post_ID):
-        reactions = cls.get_reactions(post_ID)
-        if reactions:
-            for reaction in reactions:
-                print(f"Post {post_ID} reacted by {reaction['reacting_user']} with {reaction['reaction_type']}")
-        else:
-            print(f"No reactions for post {post_ID}")
