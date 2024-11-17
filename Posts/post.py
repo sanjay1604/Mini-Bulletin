@@ -92,12 +92,3 @@ class Post:
             connection.commit()
             cursor.close()
             connection.close()
-
-    # Mocked methods for reactions and comments
-    @classmethod
-    def react(cls, post_id, reaction):
-        print(f"Post ID {post_id} reacted with {reaction}")
-
-    @classmethod
-    def comment(cls, post_id, comment):
-        print(f"Post ID {post_id} commented: {comment}")
