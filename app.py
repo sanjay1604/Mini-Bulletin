@@ -1,12 +1,19 @@
 import Communities.community as comm
-from flask import Flask, render_template, request, redirect, url_for
-from flask import send_from_directory
-from posts.post import Post
-from reactions.reaction import PostReaction
+import Communities.communityDB as comdb
+import Users.users as user
+import Users.userdb as userdb
+from Posts.post import Post
+#from Reactions.reaction import PostReaction
 import os
 from werkzeug.utils import secure_filename
+from flask import render_template, Flask, request, redirect, session, url_for
+from flask_session import Session
+from flask import send_from_directory
 
 app = Flask(__name__)
+app.secret_key = 'supersecretkey'
+app.config['SESSION_TYPE'] = 'filesystem'
+Session(app)
 
 # Configure the upload folder and allowed extensions
 app.config['UPLOAD_FOLDER'] = 'static/uploads/'
@@ -21,15 +28,59 @@ def allowed_file(filename):
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in app.config['ALLOWED_EXTENSIONS']
 
 @app.route('/')
-def create():
+def login():
+    return render_template('login.html')
+
+@app.route('/createuserform')
+def createuserform():
+    return render_template('createuser.html')
+
+@app.route('/user-login', methods=["POST"])
+def user_login():
+    username = request.form['userName']
+    password = request.form['password']
+    x = user.users()
+    result = x.login(username, password)
+
+    if result:
+        session['username'] = username
+        return render_template('welcome.html',users=username)
+    else:
+        return login()
+
+@app.route('/viewcommunities', methods=["POST"])
+def view_communities():
+    if 'username' in session:
+        username = session['username']
+        x = comm.community()
+        result = x.listOne(username)
+        return render_template('viewcommunities.html', communities=result)
+    else:
+        return render_template('welcome.html', users=username)
+
+@app.route('/toviewcommunities', methods=["POST"])
+def view_all_communities():
+    if 'username' in session:
+        username = session['username']
+        x=comm.community()
+        result = x.ListAll(username)
+        return render_template('listofcommunities.html', communities=result, users=username)
+    else:
+       return login() 
+
+@app.route('/createuser', methods=["POST"])
+def create_user():
+        username = request.form['userName']
+        password = request.form['password']
+        x = user.users()
+        x.setProperties(username,password)
+        y = x.create_user()
+        return redirect('/')
+
+@app.route('/tocreatecommunity', methods=["POST"])
+def toCreateCommunity():
     return render_template('createcommunity.html')
 
-@app.route('/create-community', methods = ["POST"])
-def create_community():
-    print("i got here")
-    x = comm.community("desc", "abc", "me")
-    y = x.Create()
-    return render_template('listofcommunities.html')
 @app.route('/create-post', methods=["GET", "POST"])
 def create_post():
     if request.method == 'POST':
@@ -120,5 +171,68 @@ def remove_reaction(post_id):
     PostReaction.remove_reaction(post_id, user_id)
     return redirect(url_for('list_posts'))  
 
+@app.route('/create-community', methods = ["POST"])
+def create_community():
+    if 'username' in session:
+        username = session['username']
+        communityName = request.form['communityName']
+        communityDesc = request.form['communityDesc']
+        username = session['username']
+        x = comm.community()
+        x.SetProperties(communityDesc,communityName, username)
+
+        y = x.Create()
+        z = x.join(communityName,username)
+
+        return render_template('welcome.html',users=username)
+
+@app.route('/join_community',methods=["POST"])
+def join_community():
+    if 'username' in session:
+        username = session['username']
+        communityName = request.form['communityName']
+        x=comm.community()
+        out=x.join(communityName,username) 
+        return render_template('welcome.html',users=username)
+
+@app.route('/exit_community',methods=["POST"])
+def exit_community():
+    if 'username' in session:
+        username = session['username']
+        communityName = request.form['communityName']
+        x=comm.community()
+        out=x.Exit(communityName,username)
+        return render_template('welcome.html',users=username)
+
+@app.route('/deleteCommunity', methods=["POST"])
+def delete_community():
+    if 'username' in session:
+        username = session['username']
+        print("for delete")
+        communityName = request.form['communityName']
+        x = comm.community()
+        out = x.Delete(communityName)
+        return render_template('welcome.html',users=username)
+
+@app.route('/renderForUpdate',methods=["POST"])
+def renderForUpdate():
+    communityName = request.form['communityName']
+    x = comm.community()
+    cObj = x.Get(communityName)
+    print(communityName)
+    print(cObj)
+    return render_template('updatecommunity.html',community=cObj)
+
+@app.route('/updateCommunity',methods=["POST"])
+def update_community():
+    communityName = request.form['communityName']
+    communityDesc = request.form['communityDesc']
+    x = comm.community()
+    x.Update(communityName, communityDesc)
+    return view_communities()
+    
+
+#render_template('listofcommunities.html')
+    
 if __name__ == '__main__':
     app.run(debug=True)

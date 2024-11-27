@@ -1,0 +1,17 @@
+<h1>CREATE AN ACCOUNT</h1>
+
+<div class = "container">
+    <form action = "/createuser" method = "POST">
+        <label for="userName">Username:</label>
+        <input type="text" id="userName" name="userName"><br><br>
+        <label for="password">Password:</label>
+        <input type="text" id="password" name="password"><br><br>
+        <button type="submit" onclick="Alert()">CREATE</button>
+    </form>
+
+    <script>
+        function Alert(){
+            alert("Account created");
+        }
+    </script>
+</div>

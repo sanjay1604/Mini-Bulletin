@@ -3,12 +3,18 @@
 
 <div class = "container">
     <form action = "/create-community" method = "POST">
-        <button onclick="Alert()">CREATE</button>
+        <label for="communityName">Community Name:</label>
+        <input type="text" id="communityName" name="communityName"><br><br>
+        <label for="communityDesc">Community Description</label>
+        <input type="text" id="communityDesc" name="communityDesc"><br><br>
+        <button type="submit" onclick="Alert()">CREATE</button>
     </form>
 
     <script>
         function Alert(){
-            alert("community created");
+            alert("Community created");
         }
     </script>
 </div>
+
+

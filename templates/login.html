@@ -1,0 +1,17 @@
+<h1> LOGIN </h1>
+<div class="container">
+    <form action="/user-login" method="POST">
+        <label for="userName">Username:</label>
+        <input type="text" id="userName" name="userName"><br><br>
+        <label for="password">Password:</label>
+        <input type="text" id="password" name="password"><br><br>
+        <button type="submit">LOGIN</button>
+        <button type="button" id="createButton">CREATE</button>
+    </form>
+</div>
+
+<script>
+    document.getElementById('createButton').addEventListener('click', function() {
+        window.location.href = '/createuserform';
+    });
+</script>

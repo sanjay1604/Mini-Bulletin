@@ -1,0 +1,18 @@
+<h1>UPDATE COMMUNITY</h1>
+
+<div class = "container">
+    <form action = "/updateCommunity" method = "POST">
+        <h1>Community Name : {{ community[0][0] }} </h1>
+        <h2>Admin : {{ community[0][1] }} </h2>
+        <label for="communityDesc">Community Description</label>
+        <input type="text" id="communityDesc" name="communityDesc" value="{{ community[0][2] }}"><br><br>
+        <input type="hidden" id="communityName" name="communityName" value="{{ community[0][0] }}"><br><br>
+        <button type="submit" onclick="Alert()">UPDATE</button>
+    </form>
+
+    <script>
+        function Alert(){
+            alert("Community updated");
+        }
+    </script>
+</div>

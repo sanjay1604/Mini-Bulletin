@@ -1,0 +1,30 @@
+<table border="1">
+    <thead>
+        <tr>
+            <th>Community Name</th>
+            <th>Admin</th>
+            <th>Description</th>
+            <th>delete community</th>
+            <th>update</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for community in communities %}
+        <tr>
+            <td>{{ community[0] }}</td>
+            <td>{{ community[1] }}</td>
+            <td>{{ community[2] }}</td>
+            <td><form action="{{ url_for( 'delete_community' ) }}" method="post">
+                <input type="hidden" name = "communityName" value="{{community[0]}}">
+                <button type="submit">delete</button>
+            </form></td>
+            <td>
+                <form action="{{ url_for( 'renderForUpdate' ) }}" method="post">
+                    <input type="hidden" name = "communityName" value="{{community[0]}}">
+                    <button type="submit">Update</button>
+                </form>
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody> 
+</table>
