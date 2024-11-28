@@ -87,8 +87,8 @@ def create_post():
     if request.method == 'POST':
         title = request.form['title']
         message = request.form['message']
-        user_id = 1  
-        community_id = 1  
+        user_id = 1         # replace with real logged-in username
+        community_id = 1    # replace with real c_name
         
         # Handle the image upload
         image_url = None
@@ -156,19 +156,19 @@ def uploaded_file(filename):
 
 @app.route('/react-upvote/<int:post_id>', methods=["POST"])
 def react_upvote(post_id):
-    user_id = 1  
+    user_id = 1                # Replace with real logged-in username
     PostReaction.upvote(post_id, user_id)
     return redirect(url_for('list_posts'))  
 
 @app.route('/react-downvote/<int:post_id>', methods=["POST"])
 def react_downvote(post_id):
-    user_id = 1  
+    user_id = 1                # Replace with real logged-in username
     PostReaction.downvote(post_id, user_id)
     return redirect(url_for('list_posts'))  
 
 @app.route('/remove-reaction/<int:post_id>', methods=["POST"])
 def remove_reaction(post_id):
-    user_id = 1  
+    user_id = 1                # Replace with real logged-in username  
     PostReaction.remove_reaction(post_id, user_id)
     return redirect(url_for('list_posts'))  
 
@@ -231,8 +231,34 @@ def update_community():
     x = comm.community()
     x.Update(communityName, communityDesc)
     return view_communities()
-    
 
+@app.route('/add-comment/<int:post_id>', methods=["POST"])
+def add_comment(post_id):
+    if request.method == "POST":
+        comment_message = request.form['comment_message']
+        commenting_user = 'User'  # Replace with real logged-in username
+        
+        Comment.add_comment(commenting_user, comment_message, post_id)
+        return redirect(url_for('list_posts'))
+    
+@app.route('/react-comment-upvote/<int:comment_id>', methods=["POST"])
+def react_comment_upvote(comment_id):
+    user_id = 1  # Replace with real logged-in username
+    CommentReaction.add_reaction(comment_id, user_id, 'upvote')
+    return redirect(url_for('list_posts'))  
+
+@app.route('/react-comment-downvote/<int:comment_id>', methods=["POST"])
+def react_comment_downvote(comment_id):
+    user_id = 1  # Replace with real logged-in username
+    CommentReaction.add_reaction(comment_id, user_id, 'downvote')
+    return redirect(url_for('list_posts'))  
+
+@app.route('/remove-comment-reaction/<int:comment_id>', methods=["POST"])
+def remove_comment_reaction(comment_id):
+    user_id = 1  # Replace with real logged-in username
+    CommentReaction.remove_reaction(comment_id, user_id)
+    return redirect(url_for('list_posts'))  
+    
 #render_template('listofcommunities.html')
     
 if __name__ == '__main__':
