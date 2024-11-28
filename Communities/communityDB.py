@@ -70,4 +70,3 @@ class communityDB:
         args=[name,username]
         self.cursor.execute(query, args)
         self.db.commit()
-
