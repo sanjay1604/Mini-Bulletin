@@ -3,7 +3,8 @@ import Communities.communityDB as comdb
 import Users.users as user
 import Users.userdb as userdb
 from Posts.post import Post
-#from Reactions.reaction import PostReaction
+from reactions.reaction import PostReaction
+from reactions.commentReaction import CommentReaction
 import os
 from werkzeug.utils import secure_filename
 from flask import render_template, Flask, request, redirect, session, url_for
