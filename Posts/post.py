@@ -66,7 +66,7 @@ class Post:
                     user_id=post['post_user'],
                     community_id=post['community_ID'],
                     post_id=post['postID'],
-                    image_url=post['image_url']  # Ensure this is set correctly
+                    image_url=post['image_url']  
                 )
         return None
 
