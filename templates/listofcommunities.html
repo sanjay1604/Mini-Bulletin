@@ -46,8 +46,7 @@
                         </td>
                         {% endif %}
                         <td>
-                            <form action="{{ url_for( 'view_community_posts' ) }}" method="post">
-                                <input type="hidden" name = "communityName" value="{{community[0]}}">
+                            <form action="{{ url_for( 'view_community_posts', communityName = community[0]) }}" method="get">
                                 <button type="post">View</button>
                             </form>
                         </td>

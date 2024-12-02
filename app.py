@@ -101,25 +101,23 @@ def tocreatepost():
     communityName = request.form['communityName']
     return render_template('createpost.html',community=communityName)
 
-@app.route('/toviewposts', methods=["POST"])
-def view_community_posts():
+@app.route('/toviewposts/<communityName>', methods=["GET"])
+def view_community_posts(communityName):
     if 'username' in session:
         username = session['username']
-        communityName = request.form['communityName']
-        return view_community_posts_by_community_name(communityName)
+        return view_community_posts_by_community_name(communityName,username)
     else:
         return render_template('welcome.html', users=username)
 
-def view_community_posts_by_community_name(communityName):
+def view_community_posts_by_community_name(communityName,username):
     posts = Post.get_by_community(communityName)
     for post in posts:
         post['upvotes'] = PostReaction.get_upvote_count(post['postID'])
         post['downvotes'] = PostReaction.get_downvote_count(post['postID'])
-        print(posts)
-    return render_template('listofposts.html', posts=posts, community=communityName)
+    return render_template('listofposts.html', posts=posts, community=communityName, username=username)
 
     
-@app.route('/create-post', methods=["POST"])
+@app.route('/create-post', methods=["GET","POST"])
 def create_post():
     if 'username' in session:
         username = session['username']
@@ -141,34 +139,42 @@ def create_post():
                 
         # Create the post
         Post.create(title, message, user_id, c_name, image_url)
-        return view_community_posts_by_community_name(community)  
+        return redirect("/toviewposts/"+community)
 
 
 @app.route('/update-post/<int:post_id>', methods=["GET", "POST"])
 def update_post(post_id):
-    post = Post.get_by_id(post_id)
-    if not post:
-        return redirect(url_for('list_posts'))  
+    if 'username' in session:
+        username = session['username']
+        post = Post.get_by_id(post_id)
+        community = post.c_name
+        if not post:
+            return redirect(url_for('list_posts'))  
 
-    # Handle the POST request for updating the post
-    if request.method == 'POST':
-        new_title = request.form['new_title']
-        new_message = request.form['new_message']
-        
-        # Handle image upload for update
-        image_url = post.image_url  
-        if 'image' in request.files:
-            image = request.files['image']
-            if image and allowed_file(image.filename):
-                filename = secure_filename(image.filename)
-                image_path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
-                image.save(image_path)
-                image_url = filename  
+        # Handle the POST request for updating the post
+        x = comm.community()
+        admin = x.adminSeek(username)
+        if username == admin or username == post.user_id:
+            if request.method == 'POST':
+                new_title = request.form['new_title']
+                new_message = request.form['new_message']
+                
+                # Handle image upload for update
+                image_url = post.image_url  
+                if 'image' in request.files:
+                    image = request.files['image']
+                    if image and allowed_file(image.filename):
+                        filename = secure_filename(image.filename)
+                        image_path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
+                        image.save(image_path)
+                        image_url = filename  
 
-        Post.update(post_id, new_title, new_message, image_url)
-        return view_community_posts_by_community_name(post.c_name)  
+                    Post.update(post_id, new_title, new_message, image_url)
+                    post = Post.get_by_id(post_id)
+            return render_template('updatepost.html', post=post,community=community)
+        return redirect("/toviewposts/"+post.c_name)
 
-    return render_template('updatepost.html', post=post)
+ 
 
 @app.route('/delete-post/<int:post_id>', methods=["POST"])
 def delete_post(post_id):
@@ -180,16 +186,19 @@ def delete_post(post_id):
         if post:
             if username == admin or username == post.user_id:
                 Post.delete(post_id)
-            return view_community_posts_by_community_name(post.c_name)
+            return redirect("/toviewposts/"+post.c_name)
 
 @app.route('/list-posts', methods=["GET"])
 def list_posts():
-    posts = Post.get_all()  
-    for post in posts:
-        # Get upvote and downvote counts for each post using dictionary keys
-        post['upvotes'] = PostReaction.get_upvote_count(post['postID'])
-        post['downvotes'] = PostReaction.get_downvote_count(post['postID'])
-    return render_template('listofposts.html', posts=posts)
+    if 'username' in session:
+        username = session['username']
+        posts = Post.get_all()  
+        for post in posts:
+            # Get upvote and downvote counts for each post using dictionary keys
+            post['upvotes'] = PostReaction.get_upvote_count(post['postID'])
+            post['downvotes'] = PostReaction.get_downvote_count(post['postID'])
+        
+        return render_template('listofposts.html', posts=posts,username=username)
 
 
 @app.route('/uploads/<filename>')
@@ -198,24 +207,30 @@ def uploaded_file(filename):
 
 @app.route('/react-upvote/<int:post_id>', methods=["POST"])
 def react_upvote(post_id):
-    user_id = 1                # Replace with real logged-in username
-    PostReaction.upvote(post_id, user_id)
-    post = Post.get_by_id(post_id)
-    return view_community_posts_by_community_name(post.c_name) 
+    if 'username' in session:
+        username = session['username']
+        user_id =  username              
+        PostReaction.upvote(post_id, user_id)
+        post = Post.get_by_id(post_id)
+        return redirect("/toviewposts/"+post.c_name)
 
 @app.route('/react-downvote/<int:post_id>', methods=["POST"])
 def react_downvote(post_id):
-    user_id = 1                # Replace with real logged-in username
-    PostReaction.downvote(post_id, user_id)
-    post = Post.get_by_id(post_id)
-    return view_community_posts_by_community_name(post.c_name) 
+    if 'username' in session:
+        username = session['username']
+        user_id = username                
+        PostReaction.downvote(post_id, user_id)
+        post = Post.get_by_id(post_id)
+        return redirect("/toviewposts/"+post.c_name)
 
 @app.route('/remove-reaction/<int:post_id>', methods=["POST"])
 def remove_reaction(post_id):
-    user_id = 1                # Replace with real logged-in username   
-    PostReaction.remove_reaction(post_id, user_id)
-    post = Post.get_by_id(post_id)
-    return view_community_posts_by_community_name(post.c_name) 
+    if 'username' in session:
+        username = session['username']
+        user_id = username                 
+        PostReaction.remove_reaction(post_id, user_id)
+        post = Post.get_by_id(post_id)
+        return redirect("/toviewposts/"+post.c_name) 
 
 @app.route('/create-community', methods = ["POST"])
 def create_community():
@@ -254,7 +269,6 @@ def exit_community():
 def delete_community():
     if 'username' in session:
         username = session['username']
-        print("for delete")
         communityName = request.form['communityName']
         x = comm.community()
         out = x.Delete(communityName)
@@ -265,8 +279,6 @@ def renderForUpdate():
     communityName = request.form['communityName']
     x = comm.community()
     cObj = x.Get(communityName)
-    print(communityName)
-    print(cObj)
     return render_template('updatecommunity.html',community=cObj)
 
 @app.route('/updateCommunity',methods=["POST"])
@@ -275,7 +287,7 @@ def update_community():
     communityDesc = request.form['communityDesc']
     x = comm.community()
     x.Update(communityName, communityDesc)
-    return view_community_posts_by_community_name(communityName)
+    return redirect("/toviewposts/"+communityName)
 
 @app.route('/add-comment/<int:post_id>', methods=["POST"])
 def add_comment(post_id):
@@ -287,42 +299,53 @@ def add_comment(post_id):
         
         Comment.add_comment(commenting_user, comment_message, post_id)
         post = Post.get_by_id(post_id)
-        return view_community_posts_by_community_name(post.c_name) 
+        return redirect("/toviewposts/"+post.c_name) 
 
 @app.route('/delete-comment/<int:comment_id>', methods=["POST"])
 def delete_comment(comment_id):
     if 'username' in session:
         username = session['username']
         comment = Comment.get_by_id(comment_id)
-        print(comment_id,comment)
         x = comm.community()
         admin = x.adminSeek(username)
         if comment and (comment['commenting_user'] == username or admin==username): 
             Comment.delete_comment(comment_id)
         
         post = Post.get_by_id(comment['post_ID'])
-        return view_community_posts_by_community_name(post.c_name)
+        return redirect("/toviewposts/"+post.c_name)
     else:
         return redirect(url_for('login'))
 
     
 @app.route('/react-comment-upvote/<int:comment_id>', methods=["POST"])
 def react_comment_upvote(comment_id):
-    user_id = 1  # Replace with real logged-in username
-    CommentReaction.add_reaction(comment_id, user_id, 'upvote')
-    return redirect(url_for('list_posts'))  
+    if 'username' in session:
+        username = session["username"]
+        user_id = username  # Replace with real logged-in username
+        CommentReaction.add_reaction(comment_id, user_id, 'upvote')
+        comment = Comment.get_by_id(comment_id)
+        post = Post.get_by_id(comment['post_ID'])
+        return redirect("/toviewposts/"+post.c_name)  
 
 @app.route('/react-comment-downvote/<int:comment_id>', methods=["POST"])
 def react_comment_downvote(comment_id):
-    user_id = 1  # Replace with real logged-in username
-    CommentReaction.add_reaction(comment_id, user_id, 'downvote')
-    return redirect(url_for('list_posts'))  
+    if 'username' in session:
+        username = session["username"]
+        user_id = username  # Replace with real logged-in username
+        CommentReaction.add_reaction(comment_id, user_id, 'downvote')
+        comment = Comment.get_by_id(comment_id)
+        post = Post.get_by_id(comment['post_ID'])
+        return redirect("/toviewposts/"+post.c_name)   
 
 @app.route('/remove-comment-reaction/<int:comment_id>', methods=["POST"])
 def remove_comment_reaction(comment_id):
-    user_id = 1  # Replace with real logged-in username
-    CommentReaction.remove_reaction(comment_id, user_id)
-    return redirect(url_for('list_posts'))  
+    if 'username' in session:
+        username = session["username"]
+        user_id = username  
+        CommentReaction.remove_reaction(comment_id, user_id)
+        comment = Comment.get_by_id(comment_id)
+        post = Post.get_by_id(comment['post_ID'])
+        return redirect("/toviewposts/"+post.c_name)  
     
 #render_template('listofcommunities.html')
     

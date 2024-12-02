@@ -1,6 +1,8 @@
 import mysql.connector
 from mysql.connector import Error
 import Comments.comment as comm
+from Reactions.CommentReactions.commentReaction import CommentReaction
+
 
 class Post:
     def __init__(self, post_title, post_message, user_id, c_name, post_id=None, image_url=None, comments = None):
@@ -64,6 +66,9 @@ class Post:
             connection.close()
             for post in posts:
                 post['comments'] = comm.Comment.get_comments_by_post(post['postID']) 
+                for comment in post['comments']:
+                    comment['upvotes'] = CommentReaction.get_upvotes(comment['comment_ID'])
+                    comment['downvotes'] = CommentReaction.get_downvotes(comment['comment_ID'])
             return posts
         return []
 
