@@ -50,3 +50,13 @@ class community:
         listOfOne = cdb.userRetrieve(admin)
         return listOfOne
     
+    def listComm(self,name):
+        cdb = commdb.communityDB()
+        commName = cdb.getCommunityName(name)
+        return commName
+    
+    def adminSeek(self,username):
+        cdb = commdb.communityDB()
+        adminName = cdb.adminRetrieve(username)
+        return adminName
+    

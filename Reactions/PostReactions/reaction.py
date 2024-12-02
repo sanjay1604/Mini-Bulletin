@@ -13,8 +13,8 @@ class PostReaction:
             connection = mysql.connector.connect(
                 host='localhost',
                 user='root',
-                password='Ganesh123*', 
-                database='minibulletin'
+                password='root', 
+                database='mini_bulletin'
             )
             if connection.is_connected():
                 return connection

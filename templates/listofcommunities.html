@@ -6,6 +6,11 @@
     <title>List of Communities</title>
 </head>
 <body>
+    <div>
+        <form action="{{ url_for( 'welcome' ) }}" method="post">
+            <button type="submit">Back</button>
+        </form>
+    </div>
     <h1>List of Communities</h1>
     <table border="1">
         <thead>
@@ -14,6 +19,7 @@
                 <th>Description</th>
                 <th>Admin</th>
                 <th>Action</th>
+                <th>View</th>
             </tr>
         </thead>
         <tbody>
@@ -27,6 +33,7 @@
                         <input type="hidden" name = "communityName" value="{{community[0]}}">
                         <button type="submit">join</button>
                     </form></td>
+                    <td></td>
                     {% else %}
                         {% if community[2]==users %}
                             <td></td>
@@ -38,6 +45,12 @@
                             </form>
                         </td>
                         {% endif %}
+                        <td>
+                            <form action="{{ url_for( 'view_community_posts' ) }}" method="post">
+                                <input type="hidden" name = "communityName" value="{{community[0]}}">
+                                <button type="post">View</button>
+                            </form>
+                        </td>
                     {% endif %}
             </tr>
             {% endfor %}

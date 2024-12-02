@@ -131,6 +131,21 @@
 </head>
 <body>
 
+    <h2>COMMUNITY {{ community }}</h2>
+
+    <div>
+        <form action="{{ url_for( 'tocreatepost' ) }}" method="post">
+            <input type="hidden" name = "communityName" value="{{ community }}">
+            <button type="submit">CREATE POST</button>
+        </form>
+    </div>
+    <div>
+        <form action="{{ url_for( 'view_all_communities' ) }}" method="post">
+            <input type="hidden" name = "communityName" value="{{ community }}">
+            <button type="submit">Back</button>
+        </form>
+    </div>
+
     <div class="container">
         <h1>List of Posts</h1>
         {% for post in posts %}
@@ -214,6 +229,9 @@
                                             <button type="submit" class="btn btn-danger remove-reaction">
                                                 <i class="fas fa-times"></i>  <!-- The 'X' icon -->
                                             </button>
+                                        </form>
+                                        <form action="{{ url_for('delete_comment', comment_id=comment['comment_ID']) }}" method="POST">
+                                            <button type="submit">Delete Comment</button>
                                         </form>
                                     </div>
                                 </div>

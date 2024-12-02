@@ -1,14 +1,16 @@
 import mysql.connector
 from mysql.connector import Error
+import Comments.comment as comm
 
 class Post:
-    def __init__(self, post_title, post_message, user_id, community_id, post_id=None, image_url=None):
+    def __init__(self, post_title, post_message, user_id, c_name, post_id=None, image_url=None, comments = None):
         self.post_id = post_id
         self.post_title = post_title
         self.post_message = post_message
         self.user_id = user_id
-        self.community_id = community_id
+        self.c_name = c_name
         self.image_url = image_url  # Store image URL/path if available
+        self.comments = comments
 
     @classmethod
     def get_db_connection(cls):
@@ -16,8 +18,8 @@ class Post:
             connection = mysql.connector.connect(
                 host='localhost',
                 user='root',
-                password='Ganesh123*',
-                database='minibulletin'
+                password='root',
+                database='mini_bulletin'
             )
             if connection.is_connected():
                 return connection
@@ -26,13 +28,13 @@ class Post:
             return None
     
     @classmethod
-    def create(cls, post_title, post_message, user_id, community_id, image_url=None):
+    def create(cls, post_title, post_message, username, c_name, image_url=None):
         connection = cls.get_db_connection()
         if connection:
             cursor = connection.cursor()
             cursor.execute(
-                "INSERT INTO posts (post_title, post_msg, post_user, community_ID, image_url) VALUES (%s, %s, %s, %s, %s)",
-                (post_title, post_message, user_id, community_id, image_url)
+                "INSERT INTO posts (post_title, post_msg, post_user, c_name, image_url) VALUES (%s, %s, %s, %s, %s)",
+                (post_title, post_message, username, c_name, image_url)
             )
             connection.commit()
             cursor.close()
@@ -50,12 +52,29 @@ class Post:
             return posts
         return []
 
+    
     @classmethod
-    def get_by_id(cls, post_id):
+    def get_by_community(cls,c_name):
         connection = cls.get_db_connection()
         if connection:
             cursor = connection.cursor(dictionary=True)
-            cursor.execute("SELECT * FROM posts WHERE postID = %s", (post_id,))
+            cursor.execute("SELECT * FROM posts WHERE c_name=%s",[c_name])
+            posts = cursor.fetchall()
+            cursor.close()
+            connection.close()
+            for post in posts:
+                post['comments'] = comm.Comment.get_comments_by_post(post['postID']) 
+            return posts
+        return []
+
+
+    @classmethod
+    def get_by_id(cls, post_id):
+        connection = cls.get_db_connection()
+        
+        if connection:
+            cursor = connection.cursor(dictionary=True)
+            cursor.execute("SELECT * FROM posts WHERE postID=%s", (post_id,))
             post = cursor.fetchone()
             cursor.close()
             connection.close()
@@ -64,9 +83,10 @@ class Post:
                     post_title=post['post_title'],
                     post_message=post['post_msg'],
                     user_id=post['post_user'],
-                    community_id=post['community_ID'],
+                    c_name=post['c_name'],
                     post_id=post['postID'],
-                    image_url=post['image_url']  
+                    image_url=post['image_url'],  # Ensure this is set correctly
+                    comments=comm.Comment.get_comments_by_post(post['postID'])
                 )
         return None
 

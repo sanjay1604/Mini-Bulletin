@@ -90,6 +90,12 @@
 
         <!-- Create Post Form -->
         <form method="POST" enctype="multipart/form-data" action="{{ url_for('create_post') }}">
+
+            <div class="form-group">
+                <h3>{{ community }}</h3>
+                <input type="hidden" class="form-control" id="communityName" name="communityName" value="{{ community }}">
+            </div>
+            
             <!-- Title Field -->
             <div class="form-group">
                 <label for="title">Title</label>

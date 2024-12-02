@@ -59,6 +59,12 @@ class communityDB:
         self.cursor.execute(query, args)
         return self.cursor.fetchall()
     
+    def adminRetrieve(self,admin):
+        query = "select Admin from community where Admin=%s"
+        args=[admin]
+        self.cursor.execute(query,args)
+        return self.cursor.fetchone()
+    
     def removeMembers(self,name):
         query = "delete from members where c_name=%s"
         args = [name]
@@ -70,3 +76,9 @@ class communityDB:
         args=[name,username]
         self.cursor.execute(query, args)
         self.db.commit()
+
+    def getCommunityName(self,c_name):
+        query = "SELECT c_name FROM community WHERE c_name=%s"
+        args = [c_name]
+        self.cursor.execute(query, args)
+        return self.cursor.fetchone()

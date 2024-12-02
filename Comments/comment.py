@@ -14,8 +14,8 @@ class Comment:
             connection = mysql.connector.connect(
                 host='localhost',
                 user='root',
-                password='Ganesh123*',
-                database='minibulletin'
+                password='root',
+                database='mini_bulletin'
             )
             if connection.is_connected():
                 return connection
@@ -35,6 +35,19 @@ class Comment:
             connection.commit()
             cursor.close()
             connection.close()
+    
+    @classmethod 
+    def delete_comment(cls, comment_id):
+        connection = cls.get_db_connection()
+        if connection:
+            cursor = connection.cursor()
+            cursor.execute(
+                "DELETE FROM comments WHERE comment_ID = %s",(comment_id,)
+            )
+        connection.commit()
+        cursor.close()
+        connection.close()
+
 
 
     @classmethod
@@ -48,3 +61,15 @@ class Comment:
             connection.close()
             return comments
         return []
+    
+    @classmethod
+    def get_by_id(cls,comment_id):
+        connection = cls.get_db_connection()
+        if connection:
+            cursor = connection.cursor(dictionary=True)
+            cursor.execute("select * from comments where comment_id=%s",[comment_id])
+            comment = cursor.fetchone()
+            cursor.close()
+            connection.close()
+            return comment
+            
