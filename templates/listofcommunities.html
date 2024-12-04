@@ -4,15 +4,103 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>List of Communities</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: linear-gradient(to right, #00c6ff, #0072ff);
+            color: #333;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px;
+            margin: 0;
+        }
+        h1 {
+            font-size: 2.5em;
+            margin-bottom: 20px;
+            color: #fff;
+        }
+        .back-button-container {
+            margin-bottom: 20px;
+        }
+        .back-button-container form {
+            display: flex;
+            justify-content: center;
+        }
+        .back-button-container button {
+            background-color: #ff4d4d;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: transform 0.3s, background-color 0.3s;
+        }
+        .back-button-container button:hover {
+            transform: scale(1.1);
+            background-color: #ff3333;
+        }
+        table {
+            width: 100%;
+            max-width: 1000px;
+            border-collapse: collapse;
+            margin-top: 20px;
+            background-color: #fff;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        th, td {
+            padding: 15px;
+            text-align: left;
+        }
+        th {
+            background-color: #0072ff;
+            color: white;
+        }
+        tr {
+            border-bottom: 1px solid #ddd;
+        }
+        tr:last-child {
+            border-bottom: none;
+        }
+        .button {
+            border: none;
+            border-radius: 5px;
+            padding: 10px;
+            cursor: pointer;
+            font-weight: bold;
+            color: white;
+            transition: background-color 0.3s;
+        }
+        .join-button {
+            background-color: #28a745;
+        }
+        .join-button:hover {
+            background-color: #218838;
+        }
+        .exit-button {
+            background-color: #ff4d4d;
+        }
+        .exit-button:hover {
+            background-color: #ff3333;
+        }
+        .view-button {
+            background-color: #ffc107;
+        }
+        .view-button:hover {
+            background-color: #e0a800;
+        }
+    </style>
 </head>
 <body>
-    <div>
-        <form action="{{ url_for( 'welcome' ) }}" method="post">
+    <h1>List of Communities</h1>
+    <div class="back-button-container">
+        <form action="{{ url_for('welcome') }}" method="post">
             <button type="submit">Back</button>
         </form>
     </div>
-    <h1>List of Communities</h1>
-    <table border="1">
+    <table>
         <thead>
             <tr>
                 <th>Community Name</th>
@@ -28,32 +116,34 @@
                 <td>{{ community[0] }}</td>
                 <td>{{ community[1] }}</td>
                 <td>{{ community[2] }}</td>
-                    {% if community[3] is none %}
-                    <td><form action="{{ url_for( 'join_community' ) }}" method="post">
-                        <input type="hidden" name = "communityName" value="{{community[0]}}">
-                        <button type="submit">join</button>
-                    </form></td>
+                {% if community[3] is none %}
+                <td>
+                    <form action="{{ url_for('join_community') }}" method="post">
+                        <input type="hidden" name="communityName" value="{{ community[0] }}">
+                        <button type="submit" class="button join-button">Join</button>
+                    </form>
+                </td>
+                <td></td>
+                {% else %}
+                    {% if community[2] == users %}
                     <td></td>
                     {% else %}
-                        {% if community[2]==users %}
-                            <td></td>
-                        {% else %}
-                        <td>
-                            <form action="{{ url_for( 'exit_community' ) }}" method="post">
-                                <input type="hidden" name = "communityName" value="{{community[0]}}">
-                                <button type="submit">exit</button>
-                            </form>
-                        </td>
-                        {% endif %}
-                        <td>
-                            <form action="{{ url_for( 'view_community_posts', communityName = community[0]) }}" method="get">
-                                <button type="post">View</button>
-                            </form>
-                        </td>
+                    <td>
+                        <form action="{{ url_for('exit_community') }}" method="post">
+                            <input type="hidden" name="communityName" value="{{ community[0] }}">
+                            <button type="submit" class="button exit-button">Exit</button>
+                        </form>
+                    </td>
                     {% endif %}
+                    <td>
+                        <form action="{{ url_for('view_community_posts', communityName=community[0]) }}" method="get">
+                            <button type="submit" class="button view-button">View</button>
+                        </form>
+                    </td>
+                {% endif %}
             </tr>
             {% endfor %}
-        </tbody> 
+        </tbody>
     </table>
 </body>
 </html>

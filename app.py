@@ -66,6 +66,12 @@ def view_communities():
     else:
         return render_template('welcome.html', users=username)
 
+@app.route('/fromMyCommunities',methods=["POST"])
+def goingBack():
+    if 'username' in session:
+        username = session['username']
+        return render_template('welcome.html',users=username)
+
 @app.route('/toviewcommunities', methods=["POST"])
 def view_all_communities():
     if 'username' in session:
@@ -254,7 +260,7 @@ def join_community():
         communityName = request.form['communityName']
         x=comm.community()
         out=x.join(communityName,username) 
-        return render_template('welcome.html',users=username)
+        return view_all_communities()
 
 @app.route('/exit_community',methods=["POST"])
 def exit_community():
@@ -263,7 +269,7 @@ def exit_community():
         communityName = request.form['communityName']
         x=comm.community()
         out=x.Exit(communityName,username)
-        return render_template('welcome.html',users=username)
+        return view_all_communities()
 
 @app.route('/deleteCommunity', methods=["POST"])
 def delete_community():
@@ -272,7 +278,8 @@ def delete_community():
         communityName = request.form['communityName']
         x = comm.community()
         out = x.Delete(communityName)
-        return render_template('welcome.html',users=username)
+        return view_communities()
+
 
 @app.route('/renderForUpdate',methods=["POST"])
 def renderForUpdate():
@@ -287,7 +294,8 @@ def update_community():
     communityDesc = request.form['communityDesc']
     x = comm.community()
     x.Update(communityName, communityDesc)
-    return redirect("/toviewposts/"+communityName)
+    return view_communities()
+
 
 @app.route('/add-comment/<int:post_id>', methods=["POST"])
 def add_comment(post_id):

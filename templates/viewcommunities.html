@@ -1,30 +1,132 @@
-<table border="1">
-    <thead>
-        <tr>
-            <th>Community Name</th>
-            <th>Admin</th>
-            <th>Description</th>
-            <th>delete community</th>
-            <th>update</th>
-        </tr>
-    </thead>
-    <tbody>
-        {% for community in communities %}
-        <tr>
-            <td>{{ community[0] }}</td>
-            <td>{{ community[1] }}</td>
-            <td>{{ community[2] }}</td>
-            <td><form action="{{ url_for( 'delete_community' ) }}" method="post">
-                <input type="hidden" name = "communityName" value="{{community[0]}}">
-                <button type="submit">delete</button>
-            </form></td>
-            <td>
-                <form action="{{ url_for( 'renderForUpdate' ) }}" method="post">
-                    <input type="hidden" name = "communityName" value="{{community[0]}}">
-                    <button type="submit">Update</button>
-                </form>
-            </td>
-        </tr>
-        {% endfor %}
-    </tbody> 
-</table>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Communities</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #f8f9fa;
+            padding: 20px;
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        h1 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 20px;
+        }
+        .back-button {
+            background-color: #dc3545;
+            color: #fff;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-bottom: 20px;
+        }
+        .back-button:hover {
+            transform: scale(1.1);
+            background-color: #b32430;
+        }
+        table {
+            width: 100%;
+            max-width: 1000px;
+            border-collapse: collapse;
+            margin-top: 20px;
+            background-color: #fff;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        th, td {
+            padding: 15px;
+            text-align: left;
+        }
+        th {
+            background-color: #007bff;
+            color: white;
+        }
+        tr {
+            border-bottom: 1px solid #ddd;
+        }
+        tr:last-child {
+            border-bottom: none;
+        }
+        .table-row {
+            background-color: #fff;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            margin-bottom: 10px;
+            padding: 15px;
+        }
+        .btn {
+            border: none;
+            border-radius: 5px;
+            padding: 10px;
+            cursor: pointer;
+            font-weight: bold;
+            color: white;
+            transition: background-color 0.3s;
+        }
+        .btn-delete {
+            background-color: #dc3545;
+        }
+        .btn-delete:hover {
+            background-color: #b32430;
+        }
+        .btn-update {
+            background-color: #ffc107;
+            color: #333;
+        }
+        .btn-update:hover {
+            background-color: #e0a800;
+        }
+    </style>
+</head>
+<body>
+    <h1>MY COMMUNITIES</h1>
+    <div>
+        <form action="{{ url_for('goingBack') }}" method="post">
+            <input type="hidden" name="communityName" value="{{ community }}">
+            <button type="submit" class="back-button">Back</button>
+        </form>
+    </div>
+    <table>
+        <thead>
+            <tr>
+                <th>Community Name</th>
+                <th>Admin</th>
+                <th>Description</th>
+                <th>Delete Community</th>
+                <th>Update</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for community in communities %}
+            <tr class="table-row">
+                <td>{{ community[0] }}</td>
+                <td>{{ community[1] }}</td>
+                <td>{{ community[2] }}</td>
+                <td>
+                    <form action="{{ url_for('delete_community') }}" method="post">
+                        <input type="hidden" name="communityName" value="{{ community[0] }}">
+                        <button type="submit" class="btn btn-delete">Delete</button>
+                    </form>
+                </td>
+                <td>
+                    <form action="{{ url_for('renderForUpdate') }}" method="post">
+                        <input type="hidden" name="communityName" value="{{ community[0] }}">
+                        <button type="submit" class="btn btn-update">Update</button>
+                    </form>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</body>
+</html>

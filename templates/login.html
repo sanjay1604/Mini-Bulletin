@@ -1,17 +1,84 @@
-<h1> LOGIN </h1>
-<div class="container">
-    <form action="/user-login" method="POST">
-        <label for="userName">Username:</label>
-        <input type="text" id="userName" name="userName"><br><br>
-        <label for="password">Password:</label>
-        <input type="text" id="password" name="password"><br><br>
-        <button type="submit">LOGIN</button>
-        <button type="button" id="createButton">CREATE</button>
-    </form>
-</div>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login</title>
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: linear-gradient(to right, #00c6ff, #0072ff);
+        }
+        .container {
+            background-color: #fff;
+            padding: 40px;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            max-width: 400px;
+            width: 100%;
+        }
+        h1 {
+            text-align: center;
+            margin-bottom: 20px;
+            color: #333;
+        }
+        label {
+            display: block;
+            margin-bottom: 8px;
+            color: #555;
+        }
+        input[type="text"], input[type="password"] {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 20px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            box-sizing: border-box;
+        }
+        button {
+            width: 100%;
+            padding: 10px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        button[type="submit"] {
+            background-color: #0072ff;
+            color: #fff;
+        }
+        button[type="button"] {
+            background-color: #e0e0e0;
+            color: #333;
+            margin-top: 10px;
+        }
+        button:hover {
+            opacity: 0.9;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Login</h1>
+        <form action="/user-login" method="POST">
+            <label for="userName">Username:</label>
+            <input type="text" id="userName" name="userName" required><br>
+            <label for="password">Password:</label>
+            <input type="password" id="password" name="password" required><br>
+            <button type="submit">LOGIN</button>
+            <button type="button" id="createButton">CREATE</button>
+        </form>
+    </div>
 
-<script>
-    document.getElementById('createButton').addEventListener('click', function() {
-        window.location.href = '/createuserform';
-    });
-</script>
+    <script>
+        document.getElementById('createButton').addEventListener('click', function() {
+            window.location.href = '/createuserform';
+        });
+    </script>
+</body>
+</html>

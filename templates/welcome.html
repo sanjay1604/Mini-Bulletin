@@ -1,17 +1,70 @@
-<h1>WELCOME</h1>
-
-<div class = "container">
-        <h1>WELCOME {{ users }} </h1>
-        <form action="/viewcommunities" method = "POST">
-            <button type="submit">view my communities</button>
-        </form>
-        <form action="/tocreatecommunity" method = "POST">
-            <button type="submit">create community</button>
-        </form>
-        <form action="/toviewcommunities" method = "POST">
-            <button type="submit">view all communities</button>
-        </form>
-        <form action="/logout" method = "POST">
-            <button type="submit">logout</button>
-        </form>
-</div>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Welcome</title>
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: linear-gradient(to right, #00c6ff, #0072ff);
+        }
+        .container {
+            text-align: center;
+            color: white;
+        }
+        h1 {
+            font-size: 3em;
+            font-weight: bold;
+            margin-bottom: 40px;
+        }
+        .buttons-container {
+            display: flex;
+            justify-content: space-between;
+            width: 100%;
+            max-width: 1200px;
+        }
+        .button {
+            background-color: white;
+            color: #0072ff;
+            border: none;
+            border-radius: 50%;
+            width: 150px;
+            height: 150px;
+            font-size: 1em;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin: 10px;
+        }
+        .button:hover {
+            background-color: #0072ff;
+            color: white;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>WELCOME {{ users }}</h1>
+        <div class="buttons-container">
+            <form action="/toviewcommunities" method="POST">
+                <button type="submit" class="button">View All Communities</button>
+            </form>
+            <form action="/tocreatecommunity" method="POST">
+                <button type="submit" class="button">Create Community</button>
+            </form>
+            <form action="/viewcommunities" method="POST">
+                <button type="submit" class="button">View My Community</button>
+            </form>
+            <form action="/logout" method="POST">
+                <button type="submit" class="button">logout</button>
+            </form>
+        </div>
+    </div>
+</body>
+</html>

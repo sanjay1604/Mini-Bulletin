@@ -1,20 +1,81 @@
-
-<h1>CREATE A COMMUNITY</h1>
-
-<div class = "container">
-    <form action = "/create-community" method = "POST">
-        <label for="communityName">Community Name:</label>
-        <input type="text" id="communityName" name="communityName"><br><br>
-        <label for="communityDesc">Community Description</label>
-        <input type="text" id="communityDesc" name="communityDesc"><br><br>
-        <button type="submit" onclick="Alert()">CREATE</button>
-    </form>
-
-    <script>
-        function Alert(){
-            alert("Community created");
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Create a Community</title>
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: linear-gradient(to right, #00c6ff, #0072ff);
         }
-    </script>
-</div>
+        .container {
+            background-color: rgba(255, 255, 255, 0.9);
+            padding: 40px;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            max-width: 500px;
+            width: 100%;
+            text-align: center;
+        }
+        h1 {
+            font-size: 2.5em;
+            font-weight: bold;
+            margin-bottom: 20px;
+            color: #0072ff;
+        }
+        label {
+            display: block;
+            margin-bottom: 10px;
+            font-weight: bold;
+            color: #555;
+        }
+        input[type="text"] {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 20px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            box-sizing: border-box;
+        }
+        button {
+            width: 100%;
+            padding: 15px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: bold;
+            background-color: #0072ff;
+            color: #fff;
+            transition: all 0.3s ease;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>CREATE A COMMUNITY</h1>
+        <form action="/create-community" method="POST">
+            <label for="communityName">Community Name:</label>
+            <input type="text" id="communityName" name="communityName" required>
+            <label for="communityDesc">Community Description:</label>
+            <input type="text" id="communityDesc" name="communityDesc" required>
+            <button type="submit" onclick="Alert()">CREATE</button>
+        </form>
 
-
+        <script>
+            function Alert(){
+                alert("Community created");
+            }
+        </script>
+    </div>
+</body>
+</html>

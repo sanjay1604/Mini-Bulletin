@@ -3,7 +3,7 @@ import Users.users as user
 import mysql.connector
 
 mydb = mysql.connector.connect(host="localhost",  user="root",  password="root",  database="mini_bulletin")
-mycursor = mydb.cursor()
+mycursor = mydb.cursor(buffered=True)
 
 class communityDB:
     db = None
@@ -11,16 +11,13 @@ class communityDB:
 
     def __init__(self):
         self.db = mydb
-        self.cursor = mydb.cursor()
+        self.cursor = mydb.cursor(buffered=True)
 
     def insert(self, descr, name, admin):
         query = "INSERT INTO community (c_name, Admin, descr) VALUES (%s,%s,%s)"
         args = name, admin, descr
         result = self.cursor.execute(query, args)
         self.db.commit()
-        print(args)
-        print("row inserted")
-        print(result)
         
     def retrieve(self, username):
         query = "SELECT C.c_name, C.descr, C.Admin, M.c_name FROM community C LEFT JOIN members M ON C.c_name=M.c_name AND M.username = %s"
@@ -63,7 +60,8 @@ class communityDB:
         query = "select Admin from community where Admin=%s"
         args=[admin]
         self.cursor.execute(query,args)
-        return self.cursor.fetchone()
+        row =  self.cursor.fetchone()
+        return row
     
     def removeMembers(self,name):
         query = "delete from members where c_name=%s"
